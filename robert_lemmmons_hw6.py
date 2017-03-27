@@ -13,17 +13,28 @@ def logFile(url):
     """
     use URLOPEN to retrieve log file
     """
+    exp = "[' ](\/[^\s',]+)"
+    p = re.compile(exp)
+    d = {}
+    
+
     with urlopen(url) as log:
         for line in log:
-            print(line)
-
-
-def sortstuff():
-    """
-    this should sort retrieved error file
-    to get top 25 most common errors
-    """
-    pass
+            l = line.decode("utf-8")
+            m = p.search(l)
+            if m:
+                if m.group(1) in d:
+                    d[m.group(1)] += 1
+                else:
+                    d[m.group(1)] = 1
+                
+        print("***Top 25 Errors***")
+        count = 0
+        for key, value in sorted(d.items(), key=lambda item: (item[1], item[0]), reverse=True):
+            print('Count: %s\tPage: %s' % (value, key))
+            count += 1
+            if count == 25:
+                break
 
 
 # Main function
