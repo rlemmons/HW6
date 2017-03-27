@@ -12,6 +12,8 @@ Create a script that opens an Apache server error log file
 def logFile(url):
     """
     use URLOPEN to retrieve log file
+    create a very convoluted regex
+    sort information in a dict
     """
     exp = "[' ](\/[^\s',]+)"
     p = re.compile(exp)
@@ -20,27 +22,26 @@ def logFile(url):
 
     with urlopen(url) as log:
         for line in log:
-            l = line.decode("utf-8")
-            m = p.search(l)
+            l = line.decode("utf-8") #this decodes from binary
+            m = p.search(l) #implementing the regex
             if m:
                 if m.group(1) in d:
-                    d[m.group(1)] += 1
+                    d[m.group(1)] += 1 #adding to count
                 else:
-                    d[m.group(1)] = 1
+                    d[m.group(1)] = 1  #creating count
                 
         print("***Top 25 Errors***")
-        count = 0
+        count = 0 
         for key, value in sorted(d.items(), key=lambda item: (item[1], item[0]), reverse=True):
             print('Count: %s\tPage: %s' % (value, key))
             count += 1
-            if count == 25:
+            if count == 25: #count up to 25 errors
                 break
 
 
 # Main function
 def main():
     """
-    Something something from a URL
     Usage:
         python3 robert_lemmons_hw6.py <URL>
     """
